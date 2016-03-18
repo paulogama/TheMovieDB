@@ -7,8 +7,12 @@
 //
 
 #import "ViewController.h"
+#import "APIClient.h"
 
 @interface ViewController ()
+
+@property NSArray *movies;
+@property APIClient *apiClient;
 
 @end
 
@@ -16,7 +20,9 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
+    
+    APIClient *apiClient = [[APIClient alloc] init];
+    [apiClient getConfiguration];
 }
 
 - (void)didReceiveMemoryWarning {

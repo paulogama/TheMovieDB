@@ -9,12 +9,11 @@
 #ifndef APIClient_h
 #define APIClient_h
 
-#import "Constants.h"
-#import "AFNetworking.h"
+#import <Foundation/Foundation.h>
 
-@interface APIClient : AFHTTPSessionManager
+@interface APIClient : NSObject
 
-- (void) getApiConfigurationWithURL(NSString *);
+- (void) getConfiguration;
 
 @end
 
