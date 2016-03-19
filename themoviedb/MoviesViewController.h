@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 #import "MovieCollectionViewCell.h"
+#import "MovieDetailViewController.h"
 
 @interface MoviesViewController : UICollectionViewController <UICollectionViewDataSource, UICollectionViewDelegateFlowLayout>
 

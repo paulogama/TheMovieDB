@@ -35,31 +35,33 @@ static NSString * const reuseIdentifier = @"MovieCell";
         if (success) {
             _secureBaseURL = (entries[@"secure_base_url"]) ?: nil;
             _posterSize = (entries[@"poster_sizes"][2]) ?: nil;
+            
+            [[APIClient sharedInstance] requestMovieListExecutingBlock:^(BOOL success, NSArray *entries) {
+                if(success) {
+                    _results = (entries) ?: nil;
+                    NSString *urlString = [[NSString alloc] init];
+                    
+                    for (int i = 0; i < _results.count; i++) {
+                        urlString = [NSString stringWithFormat:@"%@%@%@",_secureBaseURL,_posterSize,_results[i][@"poster_path"]];
+                        
+                        [[APIClient sharedInstance] loadRemoteImageFromURL:[NSURL URLWithString:urlString] andExecuteBlock:^(BOOL success, UIImage *image, NSURL *url) {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                if (success) {
+                                    [_imageArray addObject:image];
+                                    
+                                    [self.collectionView reloadData];                                    
+                                } else {
+                                    NSLog(@"Error loading image from URL");
+                                }
+                            });
+                        }];
+                    }
+                    
+                    
+                }
+            }];
         } else {
             NSLog(@"ERROR ");
-        }
-    }];
-    
-    [[APIClient sharedInstance] requestMovieListExecutingBlock:^(BOOL success, NSArray *entries) {
-        if(success) {
-            _results = (entries) ?: nil;
-            NSString *urlString = [[NSString alloc] init];
-            
-            for (int i = 0; i < _results.count; i++) {
-                urlString = [NSString stringWithFormat:@"%@%@%@",_secureBaseURL,_posterSize,_results[i][@"poster_path"]];
-                
-                [[APIClient sharedInstance] loadRemoteImageFromURL:[NSURL URLWithString:urlString] andExecuteBlock:^(BOOL success, UIImage *image, NSURL *url) {
-                    dispatch_async(dispatch_get_main_queue(), ^{
-                        if (success) {
-                            [_imageArray addObject:image];
-                        } else {
-                            NSLog(@"Error loading image from URL");
-                        }
-                    });
-                }];
-            }
-            
-            [self.collectionView reloadData];
         }
     }];
     
@@ -88,7 +90,7 @@ static NSString * const reuseIdentifier = @"MovieCell";
 }
 
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
-    return _results.count;
+    return _imageArray.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
@@ -123,33 +125,26 @@ static NSString * const reuseIdentifier = @"MovieCell";
 
 #pragma mark <UICollectionViewDelegate>
 
-/*
 // Uncomment this method to specify if the specified item should be highlighted during tracking
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldHighlightItemAtIndexPath:(NSIndexPath *)indexPath {
 	return YES;
 }
-*/
 
-/*
+
 // Uncomment this method to specify if the specified item should be selected
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
 }
-*/
 
-/*
-// Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-- (BOOL)collectionView:(UICollectionView *)collectionView shouldShowMenuForItemAtIndexPath:(NSIndexPath *)indexPath {
-	return NO;
+- (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
+    [self performSegueWithIdentifier:@"MovieDetailSegue" sender:self];
 }
 
-- (BOOL)collectionView:(UICollectionView *)collectionView canPerformAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	return NO;
+-(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+    if ([segue.identifier isEqualToString:@"MovieDetailSegue"]){
+        MovieDetailViewController *movieDetailViewController = segue.destinationViewController;
+        movieDetailViewController.titleText = @"TESTE LABEL";
+    }
 }
-
-- (void)collectionView:(UICollectionView *)collectionView performAction:(SEL)action forItemAtIndexPath:(NSIndexPath *)indexPath withSender:(id)sender {
-	
-}
-*/
 
 @end
