@@ -27,18 +27,21 @@
                                     <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="qp3-9a-hqD">
+                                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gN5-5U-AaK">
                                             <rect key="frame" x="0.0" y="0.0" width="200" height="200"/>
                                         </imageView>
                                     </subviews>
                                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 </view>
                                 <constraints>
-                                    <constraint firstAttribute="trailing" secondItem="qp3-9a-hqD" secondAttribute="trailing" constant="5" id="N73-e8-PHD"/>
-                                    <constraint firstItem="qp3-9a-hqD" firstAttribute="leading" secondItem="mzN-tN-F7C" secondAttribute="leading" constant="5" id="R0s-WQ-Wvo"/>
-                                    <constraint firstItem="qp3-9a-hqD" firstAttribute="top" secondItem="mzN-tN-F7C" secondAttribute="top" constant="5" id="hI5-Ba-dpb"/>
-                                    <constraint firstAttribute="bottom" secondItem="qp3-9a-hqD" secondAttribute="bottom" constant="5" id="rLv-I4-3eZ"/>
+                                    <constraint firstItem="gN5-5U-AaK" firstAttribute="leading" secondItem="mzN-tN-F7C" secondAttribute="leading" constant="5" id="13Z-wS-fHf"/>
+                                    <constraint firstItem="gN5-5U-AaK" firstAttribute="top" secondItem="mzN-tN-F7C" secondAttribute="top" constant="5" id="M3K-vl-9ZE"/>
+                                    <constraint firstAttribute="bottom" secondItem="gN5-5U-AaK" secondAttribute="bottom" constant="5" id="RbA-bW-4oO"/>
+                                    <constraint firstAttribute="trailing" secondItem="gN5-5U-AaK" secondAttribute="trailing" constant="5" id="xK4-ON-aHE"/>
                                 </constraints>
+                                <connections>
+                                    <outlet property="imageView" destination="gN5-5U-AaK" id="2N5-Th-Ot5"/>
+                                </connections>
                             </collectionViewCell>
                         </cells>
                         <connections>
