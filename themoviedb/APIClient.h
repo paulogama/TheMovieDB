@@ -10,10 +10,15 @@
 #define APIClient_h
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
+#import "Configuration.h"
 
 @interface APIClient : NSObject
 
-- (void) getConfiguration;
++ (APIClient *) sharedInstance;
+- (void) requestConfigurationExecutingBlock: ( void (^) (BOOL success, NSDictionary * entries) ) block;
+- (void) requestMovieListExecutingBlock: ( void (^) (BOOL success, NSArray * entries) ) block;
+- (void) loadRemoteImageFromURL: (NSURL *) url andExecuteBlock: (void (^)(BOOL success, UIImage * image, NSURL * url)) block;
 
 @end
 

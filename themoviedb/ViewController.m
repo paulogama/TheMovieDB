@@ -8,11 +8,11 @@
 
 #import "ViewController.h"
 #import "APIClient.h"
+#import "Configuration.h"
 
 @interface ViewController ()
 
 @property NSArray *movies;
-@property APIClient *apiClient;
 
 @end
 
@@ -21,8 +21,6 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    APIClient *apiClient = [[APIClient alloc] init];
-    [apiClient getConfiguration];
 }
 
 - (void)didReceiveMemoryWarning {

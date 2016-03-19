@@ -11,39 +11,74 @@
 
 #import "Constants.h"
 
-#import "Configuration.h"
-#import "Movie.h"
-
-@interface APIClient ()
-
-@property NSString *url;
-@property NSDictionary *configurationDict;
-@property Configuration *configuration;
-@end
-
 @implementation APIClient
 
-- (instancetype)init
-{
-    self = [super init];
-    if (self) {
-        self.url = [NSString stringWithFormat:@"%@%@",kBaseConfigurationURL,kApiKey];
-    }
-    return self;
++ (APIClient *) sharedInstance {
+    static dispatch_once_t pred = 0;
+    __strong static APIClient * _sharedObject = nil;
+    dispatch_once(&pred, ^{
+        _sharedObject = [[self alloc] init];
+    });
+    return _sharedObject;
 }
 
-- (void) getConfiguration {
-    NSURL *URL = [NSURL URLWithString:self.url];
+- (void) requestConfigurationExecutingBlock: ( void (^) (BOOL success, NSDictionary  * entries) ) block {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@",kBaseConfigurationURL,kApiKey];
+    NSURL *URL = [NSURL URLWithString:urlString];
+    
     AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
     [manager GET:URL.absoluteString parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
         
-        self.configurationDict = (NSDictionary *)responseObject;
-        Configuration *configuration = [[Configuration alloc] initWithAttributes:self.configurationDict];
+        if (responseObject && [responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *responseDict = (NSDictionary *)responseObject;
+            NSDictionary *imagesDict = responseDict[@"images"];
+            
+            if(imagesDict && ([imagesDict isKindOfClass:[NSDictionary class]])) {
+                block(YES,imagesDict);
+            } else block(NO,nil);
+        } else block(NO,nil);
         
-        NSLog(@"Base URL: %@", configuration.images[@"secure_base_url"]);
     } failure:^(NSURLSessionTask *operation, NSError *error) {
-        NSLog(@"Error: %@", error);
+        
+        block(NO,nil);
+        
     }];
 }
+
+- (void) requestMovieListExecutingBlock: ( void (^) (BOOL success, NSArray * entries) ) block {
+    NSString *urlString = [NSString stringWithFormat:@"%@%@%@",kBaseMovieURL,kApiKey,kSortByPopularity];
+    NSURL *URL = [NSURL URLWithString:urlString];
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager GET:URL.absoluteString parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        
+        if (responseObject && [responseObject isKindOfClass:[NSDictionary class]]) {
+            NSDictionary *responseDict = (NSDictionary *)responseObject;
+            NSArray *results = responseDict[@"results"];
+            
+            if(results && ([results isKindOfClass:[NSArray class]])) {
+                block(YES,results);
+            } else block(NO,nil);
+        } else block(NO,nil);
+        
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
+        
+        block(NO,nil);
+        
+    }];
+}
+
+- (void) loadRemoteImageFromURL: (NSURL *) url andExecuteBlock: (void (^)(BOOL success, UIImage * image, NSURL * url)) block {
+    
+    AFHTTPSessionManager *manager = [AFHTTPSessionManager manager];
+    [manager setResponseSerializer:[AFImageResponseSerializer serializer]];
+    
+    [manager GET:url.absoluteString parameters:nil progress:nil success:^(NSURLSessionTask *task, id responseObject) {
+        block(YES,responseObject,url);
+    } failure:^(NSURLSessionTask *operation, NSError *error) {
+        block(NO,nil,nil);
+    }];
+}
+
 
 @end
