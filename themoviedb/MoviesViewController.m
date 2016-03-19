@@ -12,7 +12,9 @@
 @interface MoviesViewController ()
 
 @property (nonatomic, strong) NSString *secureBaseURL;
+@property (nonatomic, strong) NSString *posterSize;
 @property (nonatomic, strong) NSArray *results;
+@property (nonatomic, strong) NSMutableArray *imageArray;
 
 @end
 
@@ -23,12 +25,16 @@ static NSString * const reuseIdentifier = @"MovieCell";
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-    [self.collectionView registerClass:[UICollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
+    //[self.collectionView registerClass:[MovieCollectionViewCell class] forCellWithReuseIdentifier:reuseIdentifier];
+
+    _secureBaseURL = @"";
+    _posterSize = @"";
+    _imageArray = [[NSMutableArray alloc] init];
     
     [[APIClient sharedInstance] requestConfigurationExecutingBlock:^(BOOL success, NSDictionary *entries) {
         if (success) {
             _secureBaseURL = (entries[@"secure_base_url"]) ?: nil;
-            NSLog(@"%@ ",_secureBaseURL);
+            _posterSize = (entries[@"poster_sizes"][2]) ?: nil;
         } else {
             NSLog(@"ERROR ");
         }
@@ -37,6 +43,23 @@ static NSString * const reuseIdentifier = @"MovieCell";
     [[APIClient sharedInstance] requestMovieListExecutingBlock:^(BOOL success, NSArray *entries) {
         if(success) {
             _results = (entries) ?: nil;
+            NSString *urlString = [[NSString alloc] init];
+            
+            for (int i = 0; i < _results.count; i++) {
+                urlString = [NSString stringWithFormat:@"%@%@%@",_secureBaseURL,_posterSize,_results[i][@"poster_path"]];
+                
+                [[APIClient sharedInstance] loadRemoteImageFromURL:[NSURL URLWithString:urlString] andExecuteBlock:^(BOOL success, UIImage *image, NSURL *url) {
+                    dispatch_async(dispatch_get_main_queue(), ^{
+                        if (success) {
+                            [_imageArray addObject:image];
+                        } else {
+                            NSLog(@"Error loading image from URL");
+                        }
+                    });
+                }];
+            }
+            
+            [self.collectionView reloadData];
         }
     }];
     
@@ -64,19 +87,14 @@ static NSString * const reuseIdentifier = @"MovieCell";
     return 1;
 }
 
-
 - (NSInteger)collectionView:(UICollectionView *)collectionView numberOfItemsInSection:(NSInteger)section {
     return _results.count;
 }
 
 - (UICollectionViewCell *)collectionView:(UICollectionView *)collectionView cellForItemAtIndexPath:(NSIndexPath *)indexPath {
-    UICollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
-    
-    NSString *urlString = [NSString stringWithFormat:@"%@%@",_secureBaseURL,_results[0][@""]];
-    
-    [[APIClient sharedInstance] loadRemoteImageFromURL:[NSURL URLWithString:urlString] andExecuteBlock:^(BOOL success, UIImage *image, NSURL *url) {
-        NSLog(@"%@",url);
-    }];
+    MovieCollectionViewCell *cell = [collectionView dequeueReusableCellWithReuseIdentifier:reuseIdentifier forIndexPath:indexPath];
+   
+    cell.imageView.image = [_imageArray objectAtIndex:indexPath.row];
     
     cell.backgroundColor = UIColor.blackColor;
     
@@ -87,15 +105,20 @@ static NSString * const reuseIdentifier = @"MovieCell";
 
 - (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
     
-    CGSize retval = CGSizeMake(100, 100);
-    retval.height += 35;
-    retval.width += 35;
+    CGSize retval = CGSizeMake(185, 185);
     return retval;
 }
 
-- (UIEdgeInsets)collectionView:
-(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
-    return UIEdgeInsetsMake(50, 20, 50, 20);
+- (UIEdgeInsets)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout insetForSectionAtIndex:(NSInteger)section {
+    return UIEdgeInsetsMake(0, 0, 0, 0);
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumInteritemSpacingForSectionAtIndex:(NSInteger)section {
+    return 0.0;
+}
+
+- (CGFloat)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout*)collectionViewLayout minimumLineSpacingForSectionAtIndex:(NSInteger)section {
+    return 0.0;
 }
 
 #pragma mark <UICollectionViewDelegate>

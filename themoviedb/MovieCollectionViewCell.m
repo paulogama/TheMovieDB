@@ -10,10 +10,18 @@
 
 @interface MovieCollectionViewCell()
 
-@property (nonatomic, weak) IBOutlet UIImageView *imageView;
-
 @end
 
 @implementation MovieCollectionViewCell
+
+-(void) setImage:(UIImage *)image{
+    
+    if(_image != image) {
+        _image = image;
+    }
+    
+    self.imageView.image = _image;
+    
+}
 
 @end

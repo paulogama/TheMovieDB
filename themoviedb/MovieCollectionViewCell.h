@@ -10,4 +10,7 @@
 
 @interface MovieCollectionViewCell : UICollectionViewCell
 
+@property (nonatomic, retain) IBOutlet UIImageView *imageView;
+@property (nonatomic, strong) UIImage *image;
+
 @end
