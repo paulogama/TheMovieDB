@@ -7,6 +7,8 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "APIClient.h"
+#import "Movie.h"
 
 #ifndef Configuration_h
 #define Configuration_h
@@ -16,8 +18,18 @@
 @property (nonatomic, strong) NSDictionary *images;
 @property (nonatomic, strong) NSDictionary *changeKeys;
 
-+ (instancetype)configurationWithAttributes:(NSDictionary *)attributes;
-- (Configuration *)initWithAttributes:(NSDictionary *)attributes;
+@property (nonatomic, strong) NSString *baseURL;
+@property (nonatomic, strong) NSString *secureBaseURL;
+@property (nonatomic, strong) NSArray *backDropSizes;
+@property (nonatomic, strong) NSArray *logoSizes;
+@property (nonatomic, strong) NSArray *posterSizes;
+@property (nonatomic, strong) NSArray *profileSizes;
+@property (nonatomic, strong) NSArray *stillSizes;
+
+/*+ (instancetype)configurationWithAttributes:(NSDictionary *)attributes;
+- (Configuration *)initWithAttributes:(NSDictionary *)attributes;*/
+
+- (void)getConfigurationsExecutingBlock:(void (^) (BOOL success)) block;
 
 @end
 

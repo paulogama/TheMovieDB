@@ -11,5 +11,11 @@
 @interface MovieDetailViewController : UIViewController
 
 @property (nonatomic, strong) NSString *titleText;
+@property (nonatomic, strong) UIImage *poster;
+@property (nonatomic, strong) NSString *yearText;
+@property (nonatomic, strong) NSString *durationText;
+@property (nonatomic, strong) NSString *voteAverageText;
+@property (nonatomic, strong) NSString *overviewText;
+
 
 @end

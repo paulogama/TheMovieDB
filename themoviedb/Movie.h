@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 
 #ifndef Movie_h
 #define Movie_h
@@ -19,7 +20,7 @@
 @property (nonatomic, strong) NSString *title;
 @property (nonatomic, strong) NSString *backdropPath;
 @property (nonatomic) float popularity;
-@property (nonatomic, strong) NSString *voteCount;
+@property (nonatomic) int voteCount;
 @property (nonatomic) BOOL video;
 @property (nonatomic) float voteAverage;
 @property (nonatomic, strong) NSString *posterPath;
@@ -27,9 +28,11 @@
 @property (nonatomic, strong) NSString *overview;
 @property (nonatomic, strong) NSDate *releaseDate;
 @property (nonatomic, strong) NSArray *genreIds;
+@property (nonatomic) UIImage *posterImage;
 
 + (instancetype)movieWithAttributes:(NSDictionary *)attributes;
 - (Movie *)initWithAttributes:(NSDictionary *)attributes;
+- (void)requestAllMoviesExecutingBlock:( void (^) (BOOL success, NSArray *array) ) block ;
 
 @end
 

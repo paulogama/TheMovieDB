@@ -56,8 +56,6 @@ static NSString * const reuseIdentifier = @"MovieCell";
                             });
                         }];
                     }
-                    
-                    
                 }
             }];
         } else {
@@ -130,7 +128,6 @@ static NSString * const reuseIdentifier = @"MovieCell";
 	return YES;
 }
 
-
 // Uncomment this method to specify if the specified item should be selected
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     return YES;
@@ -142,8 +139,16 @@ static NSString * const reuseIdentifier = @"MovieCell";
 
 -(void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if ([segue.identifier isEqualToString:@"MovieDetailSegue"]){
+        NSArray *indexPathArray = [self.collectionView indexPathsForSelectedItems];
+        NSIndexPath *indexPath = indexPathArray[0];
         MovieDetailViewController *movieDetailViewController = segue.destinationViewController;
-        movieDetailViewController.titleText = @"TESTE LABEL";
+        
+        movieDetailViewController.titleText = _results[indexPath.row][@"original_title"];
+        movieDetailViewController.poster = _imageArray[indexPath.row];
+        movieDetailViewController.yearText = _results[indexPath.row][@"release_date"];
+        movieDetailViewController.durationText = _results[indexPath.row][@"id"];
+        movieDetailViewController.voteAverageText = _results[indexPath.row][@"vote_average"];
+        movieDetailViewController.overviewText = _results[indexPath.row][@"overview"];
     }
 }
 
