@@ -12,7 +12,7 @@
 #pragma mark - API Configuration
 
 #define kBaseConfigurationURL @"http://api.themoviedb.org/3/configuration?api_key="
-#define kApiKey @"47b4629e7e3b8525f1c79598c28b6af4"
+#define kApiKey @"xxx"
 
 #pragma mark - API Movie
 
